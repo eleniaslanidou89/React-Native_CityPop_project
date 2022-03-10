@@ -10,21 +10,6 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 
 /* Home Section */
 function HomeScreen({ navigation }) {
-  //const submitHandler = (text) => {
-  //   if(text.length > 3){
-  //     setTodos(prevTodos => {
-  //       return [
-  //         { text, key: Math.random().toString() },
-  //         ...prevTodos
-  //       ];
-  //     });
-  //   } else {
-  //     Alert.alert('OOPS', 'Todo must be over 3 characters long', [
-  //       {text: 'Understood', onPress: () => console.log('alert closed') }
-  //     ]);
-  //   }
-  // };
-
   return (
     <View>
       <Title />
@@ -65,8 +50,6 @@ function SearchByCity({ navigation, submitHandler }) {
   const [text, onChangeText] = useState('')
 
   const pressHandler = () => {
-    // submitHandler(text)
-    onChangeText('')
     SearchAPIcity(text)
   }
 
@@ -114,10 +97,14 @@ function SearchByCity({ navigation, submitHandler }) {
           backgroundColor="coral"
           onPress={pressHandler}
         >
-          Looking population...
+          Loading population...
         </Icon.Button>
       </View>{' '}
-      <TextInput style={styles.input} placeholder={population} />
+      <TextInput
+        style={styles.input}
+        placeholder="population"
+        value={population}
+      />
       <View style={styles.homeButton}>
         <Icon.Button
           name="home"
@@ -133,29 +120,14 @@ function SearchByCity({ navigation, submitHandler }) {
 }
 
 /* Search By Country Section */
-
 function SearchByCountry({ navigation, submitHandler }) {
   const [text, onChangeText] = useState('')
 
   const pressHandler = () => {
-    // submitHandler(text)
-    onChangeText('')
     SearchAPIcity(text)
-    Alert.alert('Alert Title', 'My Alert Msg', [
-      {
-        text: 'Ask me later',
-        onPress: () => console.log('Ask me later pressed'),
-      },
-      {
-        text: 'Cancel',
-        onPress: () => console.log('Cancel Pressed'),
-        style: 'cancel',
-      },
-      { text: 'OK', onPress: () => console.log('OK Pressed') },
-    ])
   }
 
-  const [population, setPopulation] = useState('Population')
+  const [cityName, setCityName] = useState('Cities')
   const [loading, setLoading] = useState(false)
 
   function SearchAPIcity(country = { text }) {
@@ -175,10 +147,11 @@ function SearchByCountry({ navigation, submitHandler }) {
       .then((response) => response.json())
       .then((response) => {
         var geonames = response.geonames
-        setPopulation(geonames[0].population)
+
+        var cities = geonames.map(({ name: actualValue }) => actualValue)
+        setCityName(cities)
       })
       .catch((err) => {
-        window.alert('Please enter the country code eg. SE')
       })
       .finally(() => setLoading(false))
   }
@@ -198,10 +171,14 @@ function SearchByCountry({ navigation, submitHandler }) {
           backgroundColor="coral"
           onPress={pressHandler}
         >
-          Looking population...
+          Loading cities...
         </Icon.Button>
       </View>
-      <TextInput style={styles.input} placeholder={population} />
+      <TextInput
+        style={styles.input}
+        placeholder="City Name"
+        value={cityName}
+      />
       <View style={styles.homeButton}>
         <Icon.Button
           name="home"
@@ -260,6 +237,16 @@ const styles = StyleSheet.create({
   },
   searchButtonCountryPopulation: {
     marginTop: 50,
+  },
+  cityName: {
+    flex: 1,
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    paddingLeft: 20,
+    width: 200,
+    borderColor: '#777',
+    borderRadius: 20,
   },
 })
 
